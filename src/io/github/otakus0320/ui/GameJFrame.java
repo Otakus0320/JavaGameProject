@@ -1,8 +1,10 @@
 package io.github.otakus0320.ui;
 
 import javax.swing.*;
+import java.util.Random;
 
 public class GameJFrame extends JFrame {
+    int[][] data = new int[4][4];
     public GameJFrame() {
         // initialize menu
         initJFrame();
@@ -10,17 +12,37 @@ public class GameJFrame extends JFrame {
         // initialize JMenuBar
         initJMenuBar();
 
+        // initialize Data
+        initData();
+
         // initialize image
         initImage();
 
         this.setVisible(true);
     }
 
+    private void initData() {
+        int[] tempData = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
+        Random random = new Random();
+
+        // randomized tempData
+        for (int i = 0; i < tempData.length; i++) {
+            int index = random.nextInt(tempData.length);
+            int temp = tempData[i];
+            tempData[i] = tempData[index];
+            tempData[index] = temp;
+        }
+
+        // initialize data
+        for (int i = 0; i < tempData.length; i++) {
+            data[i/4][i%4] = tempData[i];
+        }
+    }
+
     private void initImage() {
-        // img number
-        int number = 1;
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
+                int number = data[i][j];
                 // create ImageIcon
                 ImageIcon icon1 = new ImageIcon("img/testImg/"+number+".png");
 
@@ -32,9 +54,6 @@ public class GameJFrame extends JFrame {
 
                 // add JLabel to ui
                 this.getContentPane().add(jlabel);
-
-                // next img
-                number++;
             }
         }
 
