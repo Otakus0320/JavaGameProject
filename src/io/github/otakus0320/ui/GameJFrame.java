@@ -1,9 +1,13 @@
 package io.github.otakus0320.ui;
 
 import javax.swing.*;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.Border;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.Random;
 
-public class GameJFrame extends JFrame {
+public class GameJFrame extends JFrame implements KeyListener {
     int[][] data = new int[4][4];
     public GameJFrame() {
         // initialize menu
@@ -21,11 +25,14 @@ public class GameJFrame extends JFrame {
         this.setVisible(true);
     }
 
+    // record the location of selected image
+    int x, y;
+
     private void initData() {
         int[] tempData = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
         Random random = new Random();
 
-        // randomized tempData
+        // randomize tempData
         for (int i = 0; i < tempData.length; i++) {
             int index = random.nextInt(tempData.length);
             int temp = tempData[i];
@@ -35,11 +42,20 @@ public class GameJFrame extends JFrame {
 
         // initialize data
         for (int i = 0; i < tempData.length; i++) {
+            // find the select image
+            if (tempData[i] == 1){
+                x = i / 4;
+                y = i % 4;
+            }
             data[i/4][i%4] = tempData[i];
+
         }
     }
 
     private void initImage() {
+        // clear all things in content pane
+        this.getContentPane().removeAll();
+
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
                 int number = data[i][j];
@@ -50,13 +66,24 @@ public class GameJFrame extends JFrame {
                 JLabel jlabel = new JLabel(icon1);
 
                 // set location
-                jlabel.setBounds(105*j,105*i,105,105);
+                jlabel.setBounds(105*j + 91,105*i + 130,105,105);
+
+                // add border
+                jlabel.setBorder(new BevelBorder(BevelBorder.RAISED));
 
                 // add JLabel to ui
                 this.getContentPane().add(jlabel);
             }
         }
 
+        // initialize background image
+        Random random = new Random();
+        JLabel backGround = new JLabel(new ImageIcon("img/bgImg/"+random.nextInt(1,5)+".png"));
+        backGround.setBounds(32,70,540,540);
+        this.getContentPane().add(backGround);
+
+        // flush the pane
+        this.getContentPane().repaint();
 
     }
 
@@ -90,5 +117,54 @@ public class GameJFrame extends JFrame {
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setLayout(null);
+
+        //add keyboard listener
+        this.addKeyListener(this);
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        int code = e.getKeyCode();
+
+        // move the select image
+        if (code == 37){
+            // move left
+            if (y == 0) return;
+            data[x][y] = data[x][y-1];
+            data[x][y-1] = 1;
+            y--;
+            initImage();
+        }else if (code == 38){
+            // move up
+            if (x == 0) return;
+            data[x][y] = data[x-1][y];
+            data[x-1][y] = 1;
+            x--;
+            initImage();
+        }else if (code == 39){
+            // move right
+            if (y == 3) return;
+            data[x][y] = data[x][y+1];
+            data[x][y+1] = 1;
+            y++;
+            initImage();
+        }else if (code == 40){
+            // move down
+            if (x == 3) return;
+            data[x][y] = data[x+1][y];
+            data[x+1][y] = 1;
+            x++;
+            initImage();
+        }
     }
 }
