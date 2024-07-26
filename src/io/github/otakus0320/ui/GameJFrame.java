@@ -9,6 +9,19 @@ import java.util.Random;
 
 public class GameJFrame extends JFrame implements KeyListener {
     int[][] data = new int[4][4];
+    int[][] test = new int[][]{
+        {1, 2, 3, 4},
+        {5, 6, 7, 8},
+        {9, 10, 11, 12},
+        {13, 14, 15, 16}
+    };
+
+    // record the location of selected image
+    int x, y;
+
+    // set path
+    String path = "img/testImg2/";
+
     public GameJFrame() {
         // initialize menu
         initJFrame();
@@ -25,9 +38,6 @@ public class GameJFrame extends JFrame implements KeyListener {
         this.setVisible(true);
     }
 
-    // record the location of selected image
-    int x, y;
-
     private void initData() {
         int[] tempData = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
         Random random = new Random();
@@ -43,7 +53,7 @@ public class GameJFrame extends JFrame implements KeyListener {
         // initialize data
         for (int i = 0; i < tempData.length; i++) {
             // find the select image
-            if (tempData[i] == 1){
+            if (tempData[i] == 16){
                 x = i / 4;
                 y = i % 4;
             }
@@ -56,11 +66,19 @@ public class GameJFrame extends JFrame implements KeyListener {
         // clear all things in content pane
         this.getContentPane().removeAll();
 
+        // determine victory or not
+        if (ifVictory()){
+            ImageIcon winIcon = new ImageIcon(path + "victory.png");
+            JLabel winJLabel = new JLabel(winIcon);
+            winJLabel.setBounds(210, 250, 180, 180);
+            this.getContentPane().add(winJLabel);
+        }
+
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
                 int number = data[i][j];
                 // create ImageIcon
-                ImageIcon icon1 = new ImageIcon("img/testImg/"+number+".png");
+                ImageIcon icon1 = new ImageIcon(path+number+".png");
 
                 // create JLabel to manage
                 JLabel jlabel = new JLabel(icon1);
@@ -77,8 +95,7 @@ public class GameJFrame extends JFrame implements KeyListener {
         }
 
         // initialize background image
-        Random random = new Random();
-        JLabel backGround = new JLabel(new ImageIcon("img/bgImg/"+random.nextInt(1,5)+".png"));
+        JLabel backGround = new JLabel(new ImageIcon("img/bgImg/1.png"));
         backGround.setBounds(32,70,540,540);
         this.getContentPane().add(backGround);
 
@@ -139,32 +156,53 @@ public class GameJFrame extends JFrame implements KeyListener {
         // move the select image
         if (code == 37){
             // move left
-            if (y == 0) return;
-            data[x][y] = data[x][y-1];
-            data[x][y-1] = 1;
-            y--;
+            if (y == 3) return;
+            data[x][y] = data[x][y+1];
+            data[x][y+1] = 16;
+            y++;
             initImage();
         }else if (code == 38){
             // move up
-            if (x == 0) return;
-            data[x][y] = data[x-1][y];
-            data[x-1][y] = 1;
-            x--;
+            if (x == 3) return;
+            data[x][y] = data[x+1][y];
+            data[x+1][y] = 16;
+            x++;
             initImage();
         }else if (code == 39){
             // move right
-            if (y == 3) return;
-            data[x][y] = data[x][y+1];
-            data[x][y+1] = 1;
-            y++;
+            if (y == 0) return;
+            data[x][y] = data[x][y-1];
+            data[x][y-1] = 16;
+            y--;
             initImage();
         }else if (code == 40){
             // move down
-            if (x == 3) return;
-            data[x][y] = data[x+1][y];
-            data[x+1][y] = 1;
-            x++;
+            if (x == 0) return;
+            data[x][y] = data[x-1][y];
+            data[x-1][y] = 16;
+            x--;
+            initImage();
+        }else if (code == 74){
+            data = new int[][]{
+                    {1, 2, 3, 4},
+                    {5, 6, 7, 8},
+                    {9, 10, 11, 12},
+                    {13, 14, 15, 16}
+            };
+            x = 3;
+            y = 3;
             initImage();
         }
+    }
+
+    // determine victory or not
+    public boolean ifVictory(){
+        // compare data array and test array
+        for (int i = 0; i < data.length; i++) {
+            for (int j = 0; j < data[i].length; j++) {
+                if (data[i][j] != test[i][j]) return false;
+            }
+        }
+        return true;
     }
 }
