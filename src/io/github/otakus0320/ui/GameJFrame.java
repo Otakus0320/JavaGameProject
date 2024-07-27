@@ -2,12 +2,17 @@ package io.github.otakus0320.ui;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
-import javax.swing.border.Border;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Random;
 
-public class GameJFrame extends JFrame implements KeyListener {
+public class GameJFrame extends JFrame implements KeyListener, ActionListener {
     int[][] data = new int[4][4];
     int[][] test = new int[][]{
         {1, 2, 3, 4},
@@ -18,6 +23,16 @@ public class GameJFrame extends JFrame implements KeyListener {
 
     // record the location of selected image
     int x, y;
+
+    // count step
+    int cntStep = 0;
+
+    // create menu item
+    JMenuItem restartItem = new JMenuItem("Restart");
+    JMenuItem reLoginItem = new JMenuItem("Sign in again");
+    JMenuItem closeItem = new JMenuItem("Close game");
+
+    JMenuItem aboutItem = new JMenuItem("Github link");
 
     // set path
     String path = "img/testImg2/";
@@ -74,6 +89,11 @@ public class GameJFrame extends JFrame implements KeyListener {
             this.getContentPane().add(winJLabel);
         }
 
+        // step count
+        JLabel stepCount = new JLabel("Step:" + cntStep);
+        stepCount.setBounds(50,30,100,20);
+        this.getContentPane().add(stepCount);
+
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
                 int number = data[i][j];
@@ -109,17 +129,17 @@ public class GameJFrame extends JFrame implements KeyListener {
         JMenu optionJMenu = new JMenu("Option");
         JMenu aboutJMenu = new JMenu("About");
 
-        JMenuItem restartItem = new JMenuItem("Restart");
-        JMenuItem reLoginItem = new JMenuItem("Sign in again");
-        JMenuItem closeItem = new JMenuItem("Close game");
-
-        JMenuItem accountItem = new JMenuItem("Github link");
-
         optionJMenu.add(restartItem);
         optionJMenu.add(reLoginItem);
         optionJMenu.add(closeItem);
 
-        aboutJMenu.add(accountItem);
+        aboutJMenu.add(aboutItem);
+
+        // binding events
+        restartItem.addActionListener(this);
+        reLoginItem.addActionListener(this);
+        closeItem.addActionListener(this);
+        aboutItem.addActionListener(this);
 
         menuBar.add(optionJMenu);
         menuBar.add(aboutJMenu);
@@ -160,6 +180,9 @@ public class GameJFrame extends JFrame implements KeyListener {
             data[x][y] = data[x][y+1];
             data[x][y+1] = 16;
             y++;
+
+            cntStep++;
+
             initImage();
         }else if (code == 38){
             // move up
@@ -167,6 +190,9 @@ public class GameJFrame extends JFrame implements KeyListener {
             data[x][y] = data[x+1][y];
             data[x+1][y] = 16;
             x++;
+
+            cntStep++;
+
             initImage();
         }else if (code == 39){
             // move right
@@ -174,6 +200,9 @@ public class GameJFrame extends JFrame implements KeyListener {
             data[x][y] = data[x][y-1];
             data[x][y-1] = 16;
             y--;
+
+            cntStep++;
+
             initImage();
         }else if (code == 40){
             // move down
@@ -181,6 +210,9 @@ public class GameJFrame extends JFrame implements KeyListener {
             data[x][y] = data[x-1][y];
             data[x-1][y] = 16;
             x--;
+
+            cntStep++;
+
             initImage();
         }else if (code == 74){
             data = new int[][]{
@@ -204,5 +236,29 @@ public class GameJFrame extends JFrame implements KeyListener {
             }
         }
         return true;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        // get the event
+        Object obj = e.getSource();
+
+        if (obj == restartItem){
+            cntStep = 0;
+            initData();
+            initImage();
+        }else if (obj == reLoginItem){
+            this.setVisible(false);
+            new LoginJFrame();
+        }else if (obj == closeItem){
+            System.exit(0);
+        }else if (obj == aboutItem){
+            Desktop desktop = Desktop.getDesktop();
+            try {
+                desktop.browse(new URI("https://github.com/Otakus0320"));
+            } catch (IOException | URISyntaxException ex) {
+                System.out.println("break");
+            }
+        }
     }
 }
