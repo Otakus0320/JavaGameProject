@@ -31,7 +31,6 @@ public class GameJFrame extends JFrame implements KeyListener, ActionListener {
     JMenuItem restartItem = new JMenuItem("Restart");
     JMenuItem reLoginItem = new JMenuItem("Sign in again");
     JMenuItem closeItem = new JMenuItem("Close game");
-
     JMenuItem aboutItem = new JMenuItem("Github link");
 
     // set path
@@ -150,7 +149,6 @@ public class GameJFrame extends JFrame implements KeyListener, ActionListener {
     private void initJFrame() {
         this.setSize(603,680);
         this.setTitle("MyGame");
-        this.setAlwaysOnTop(true);
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setLayout(null);
